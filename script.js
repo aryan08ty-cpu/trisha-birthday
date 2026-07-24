@@ -182,6 +182,59 @@ function showBirthdayMessage() {
     });
 }
 
+// Reveal Content Function
+function revealBirthdayContent() {
+    const hiddenContent = document.getElementById('hidden-content');
+    const countdownSection = document.querySelector('.countdown-only');
+    const navbar = document.getElementById('navbar');
+    const footer = document.getElementById('footer');
+    const navMenu = document.getElementById('nav-menu');
+
+    // Show hidden content
+    hiddenContent.classList.add('show');
+
+    // Hide countdown-only section
+    countdownSection.style.display = 'none';
+
+    // Show navbar and footer
+    navbar.classList.remove('hide');
+    footer.classList.remove('hide');
+
+    // Show nav menu links
+    navMenu.style.display = 'flex';
+
+    // Trigger birthday celebration
+    triggerBirthdayParty();
+
+    // Re-enable scroll animations for revealed content
+    enableScrollAnimations();
+}
+
+// Enable Scroll Animations
+function enableScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections
+    document.querySelectorAll('#home, #gallery, #letter').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+    });
+}
+
 // Countdown Timer
 function updateCountdown() {
     // Set the target date (August 24, 2026)
@@ -208,10 +261,10 @@ function updateCountdown() {
         document.getElementById('minutes').textContent = '00';
         document.getElementById('seconds').textContent = '00';
 
-        // Trigger birthday celebration
+        // Trigger birthday celebration - only once
         if (!window.birthdayTriggered) {
             window.birthdayTriggered = true;
-            triggerBirthdayParty();
+            revealBirthdayContent();
         }
     }
 }
@@ -243,34 +296,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add scroll animation to elements
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe sections
-document.querySelectorAll('.countdown-section, .gallery-section, .letter-section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
-});
-
 // Gallery image functionality
 const galleryItems = document.querySelectorAll('.gallery-item');
 galleryItems.forEach(item => {
     item.addEventListener('click', function() {
-        // You can add lightbox or modal functionality here in the future
         console.log('Gallery item clicked');
     });
 });
